@@ -1,0 +1,283 @@
+#!/usr/bin/python3
+# -*- coding:utf-8 -*-
+#
+# Copyright © 2016 "DuZeru GNU/Linux" <claudiosilva@duzeru.org>
+# Contribution Gabriel Vilar <gabrielvilar@duzeru.org>
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+#
+
+import inspect
+import os
+from signal import signal, SIGINT, SIG_DFL
+from subprocess import Popen
+from sys import exit
+try:
+    # python 3
+    from urllib.request import urlopen, pathname2url
+except ImportError:
+    # python 2
+    from urllib import urlopen, pathname2url
+from webbrowser import open_new_tab
+from json import dumps as to_json
+from gi.repository import WebKit, Gtk
+
+
+class KernelConfig(object):
+    def __init__(self):
+        # store our base architecture
+        if os.uname()[4] == 'x86_64':
+            self._arch = '64-bit'
+        else:
+            self._arch = '32-bit'
+
+        # store we are a live CD session
+        self._live = os.path.exists('/bootmnt/manjaro')
+
+        # store full path to our binary
+        self._kernel_bin_path = os.path.abspath(inspect.getfile(inspect.currentframe()))
+
+        # store directory to our kernel configuration
+        self._config_dir = os.path.expanduser('~/.config/duzeru/kernel/')
+
+        # store full path to our autostart symlink
+        self._autostart_path = os.path.expanduser('~/.config/autostart/duzeru_kernel.desktop')
+
+        # ensure our config directory exists
+        if not os.path.exists(self._config_dir):
+            try:
+                os.makedirs(self._config_dir)
+            except OSError as e:
+                print(e)
+                pass
+
+        # does autostart symlink exist
+        self._autostart = os.path.exists(self._autostart_path)
+
+    def change_autostart(self, state):
+        if state and not os.path.exists(self._autostart_path):
+            # create the autostart symlink
+            try:
+                os.symlink( '/usr/share/applications/duzeru_kernel.desktop', self._autostart_path )
+            except OSError as e:
+                print(e)
+                pass
+        elif not state and os.path.exists(self._autostart_path):
+            # remove the autostart symlink
+            try:
+                os.unlink(self._autostart_path)
+            except OSError as e:
+                print(e)
+                pass
+        # determine autostart state based on absence of the disable file
+        self._autostart = os.path.exists(self._autostart_path)
+
+class DuzeruAppView(WebKit.WebView):
+    def __init__(self):
+        WebKit.WebView.__init__(self)
+
+        self._config = KernelConfig()
+
+        self.connect('load-finished', self._load_finished_cb)
+        self.connect('navigation-policy-decision-requested', self._nav_request_policy_decision_cb)
+        self.l_uri = None
+
+    def _push_config(self):
+        # TODO: push notification should be connected to angularjs and use a broadcast event
+        # any suitable controllers will be able to listen and respond accordingly, for now
+        # we just use jQuery to manually toggle
+
+        self.execute_script("$('#arch').html('{}')".format(self._config._arch))
+        self.execute_script("$('#autostart').toggleClass('icon-check', {})\
+            .toggleClass('icon-check-empty', {})".format(to_json
+                (self._config._autostart), to_json(not self._config._autostart)))
+
+        """self.execute_script("$('#{}').hide()".format(
+            'buildmanjaro' if self._config._live else 'install'))
+        self.execute_script("$('#{}').hide()".format(
+            'donations' if self._config._live else 'install-cli'))
+        self.execute_script("$('#{}').hide()".format(
+            'password' if not self._config._live else '#'))
+        """
+    def _load_finished_cb(self, view, frame):
+        self._push_config()
+
+    def _nav_request_policy_decision_cb(self, view, frame, net_req, nav_act, pol_dec):
+        uri = net_req.get_uri()
+
+        try:
+            if uri.index('#') > 0:
+                uri = uri[:uri.index('#')]
+        except ValueError:
+            pass
+
+        if uri == self.l_uri:
+            pol_dec.use()
+            return True
+
+        if uri.startswith('cmd://'):
+            self._do_command(uri)
+            return True
+
+        self.l_uri = uri
+
+        page = urlopen(uri)
+        frame.load_string(page.read().decode("utf-8"), "text/html", 
+            "utf-8", page.geturl())
+        pol_dec.ignore()
+        return True
+#INICIO CHAMADA DE SCRIPTS DE KERNELS ENCONTRADOS EM /usr/bin/duzeru-kernel*
+    def _do_command(self, uri):
+
+        if uri.startswith('cmd://'):
+            uri = uri[6:]
+
+        if uri == 'kernel_4.4.3amd64':
+            if os.path.exists("/usr/bin/duzeru-kernel-4.4.3-amd64"):
+                Popen(['gksudo', 'duzeru-kernel-4.4.3-amd64-intro'])
+            else:
+                      print('duzeru-kernel-4.4.3-amd64 not installed'.format(uri))
+
+        elif uri == 'kernel-now':
+            if os.path.exists("/usr/bin/duzeru-kernel-now-intro"):
+                Popen(['duzeru-kernel-now-intro'])
+            else:
+                      print('duzeru-kernel-now not installed'.format(uri))
+
+        elif uri == 'kernel-remove':
+            if os.path.exists("/usr/bin/duzeru-kernel-remove"):
+                Popen(['gksudo', 'duzeru-kernel-remove-intro'])
+            else:
+                      print('duzeru-kernel-now not installed'.format(uri))
+
+        elif uri == 'kernel_4.4.3amd64_ll':
+            if os.path.exists("/usr/bin/duzeru-kernel-4.0.9-amd64_low-latence"):
+                Popen(['gksudo', 'duzeru-kernel-4.0.9-amd64_low-latence-intro'])
+            else:
+                      print('duzeru-kernel-4.4.3-amd64_low-latence not installed'.format(uri))
+
+        elif uri == 'kernel_4.0.9amd64':
+            if os.path.exists("/usr/bin/duzeru-kernel-4.0.9-amd64"):
+                Popen(['gksudo', 'duzeru-kernel-4.0.9-amd64-intro'])
+            else:
+                      print('duzeru-kernel-4.0.9-amd64 not installed'.format(uri))
+
+        elif uri == 'kernel_4.0.9amd64_ll':
+            if os.path.exists("/usr/bin/duzeru-kernel-4.0.9-amd64_low-latence"):
+                Popen(['gksudo', 'duzeru-kernel-4.0.9-amd64_low-latence-intro'])
+            else:
+                      print('duzeru-kernel-4.0.9-amd64_low-latence not installed'.format(uri))
+
+        elif uri == 'kernel_3.19.8amd64':
+            if os.path.exists("/usr/bin/duzeru-kernel-3.19.8-amd64"):
+                Popen(['gksudo', 'duzeru-kernel-3.19.8-amd64-intro'])
+            else:
+                      print('duzeru-kernel-3.19.8-amd64 not installed'.format(uri))
+
+        elif uri == 'kernel_3.19.8amd64_ll':
+            if os.path.exists("/usr/bin/duzeru-kernel-3.19.8-amd64_low-latence"):
+                Popen(['gksudo', 'duzeru-kernel-3.19.8-amd64_low-latence-intro'])
+            else:
+                      print('duzeru-kernel-3.19.8-amd64_low-latence not installed'.format(uri))
+
+#INICIO DE URLs para informação
+        elif uri == 'info_4.4.3amd64':
+            Popen(['exo-open', 'https://cdn.kernel.org/pub/linux/kernel/v4.x/ChangeLog-4.4.3'])
+
+        elif uri == 'info_4.4.3amd64-ll':
+            Popen(['exo-open', 'https://cdn.kernel.org/pub/linux/kernel/v4.x/ChangeLog-4.4.3'])
+
+        elif uri == 'info_4.0.9amd64':
+            Popen(['exo-open', 'https://cdn.kernel.org/pub/linux/kernel/v4.x/ChangeLog-4.0.9'])
+
+        elif uri == 'info_4.0.9amd64-ll':
+            Popen(['exo-open', 'https://cdn.kernel.org/pub/linux/kernel/v4.x/ChangeLog-4.0.9'])
+
+        elif uri == 'info_3.19.8':
+            Popen(['exo-open', 'https://cdn.kernel.org/pub/linux/kernel/v3.x/ChangeLog-3.19.8'])
+
+        elif uri == 'info_3.19.8-ll':
+            Popen(['exo-open', 'https://cdn.kernel.org/pub/linux/kernel/v3.x/ChangeLog-3.19.8'])
+#Fim ulrs de informação
+
+        elif uri == 'close':
+            Gtk.main_quit()
+
+        elif uri == 'toggle-startup':
+            # toggle autostart
+            check_uncheck = True if not self._config._autostart else False
+            self._config.change_autostart(check_uncheck)
+
+            self._push_config()
+
+        elif uri.startswith("link?"):
+            open_new_tab(uri[5:])
+
+        else:
+            print('Unknown command: {}'.format(uri))
+
+
+class KernelApp(object):
+    def __init__(self):
+        # establish our location
+        self._location = os.path.dirname(os.path.abspath(inspect.getfile(
+            inspect.currentframe())))
+
+        # check for relative path
+        if os.path.exists(os.path.join(self._location, 'data/')):
+            print('Using relative path for data source. Non-production testing.')
+            self._data_path = os.path.join(self._location, 'data/')
+        elif os.path.exists('/usr/share/duzerukernel/'):
+            print('Using /usr/share/duzerukernel/ path.')
+            self._data_path = '/usr/share/duzerukernel/'
+        else:
+            print('Unable to source the duzerukernel data directory.')
+            exit(1)
+
+        self._build_app()
+
+    def _build_app(self):
+        # build window
+        w = Gtk.Window()
+        w.set_position(Gtk.WindowPosition.CENTER)
+        w.set_wmclass('Kernel to Linux Duzeru', 'Kernel to Linux Duuzeru')
+        w.set_title('Kernel to Linux Duzeru')
+        w.set_size_request(768, 496)
+        w.set_icon_from_file(os.path.join(self._data_path, "/usr/share/icons/hicolor/24x24/apps/duzeru-kernel.png"))
+
+        # build webkit container
+        mv = DuzeruAppView()
+
+        # load our index file
+        file_out = os.path.abspath(os.path.join(self._data_path, 'index.html'))
+
+        uri = 'file://' + pathname2url(file_out)
+        mv.open(uri)
+
+        # build scrolled window widget and add our appview container
+        sw = Gtk.ScrolledWindow()
+        sw.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+        sw.add(mv)
+
+        # build a an autoexpanding box and add our scrolled window
+        b = Gtk.VBox(homogeneous=False, spacing=0)
+        b.pack_start(sw, expand=True, fill=True, padding=0)
+
+        # add the box to the parent window and show
+        w.add(b)
+        w.connect('delete-event', self.close)
+        w.show_all()
+
+        self._window = w
+        self._appView = mv
+
+    def run(self):
+        signal(SIGINT, SIG_DFL)
+        Gtk.main()
+
+    def close(self, p1, p2):
+        Gtk.main_quit(p1, p2)
+
+app = KernelApp()
+app.run()

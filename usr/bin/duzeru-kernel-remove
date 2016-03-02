@@ -1,0 +1,37 @@
+#!/bin/bash
+#Script teste para remoção de kernels para o DuZeru
+#Abaixo apenas algumas variáveis para colorir as opções de kernel atual e encotrados
+katual=`uname -r`
+kantigos=`dpkg-query -l | awk '/linux-image-*/ {print $2}'`
+
+clear
+
+echo -e "\e[32;1m Kernel atual \e[m"
+echo "======================="
+echo -e "\e[33;1m $katual  \e[m"
+echo "======================="
+echo 
+echo -e "\e[32;1m Kernels encontrados - Kernels found\e[m"
+echo -e "\e[31;1m $kantigos \e[m"
+echo 
+echo
+sleep 3
+echo -e "\e[32;1m PT-Br Remover Kernels antigos?\e[m \e[31;1m y/n\e[m"
+echo -e "\e[32;1m EN    Remove old Kernels?     \e[m \e[31;1m y/n\e[m"
+read -n1 escolha
+#opções de escolha para cancelamento ou remoção de antigos kernels
+case $escolha in
+	Y|y) echo
+		echo Remove Kernels old
+		dpkg -l 'linux-*' | sed '/^ii/!d;/'"$(uname -r | sed "s/\(.*\)-\([^0-9]\+\)/\1/")"'/d;s/^[^ ]* [^ ]* \([^ ]*\).*/\1/;/[0-9]/!d' | xargs sudo apt-get -y purge
+	sudo update-grub
+	sudo init 6;;
+	N|n) echo
+		echo Cancelado
+		sleep 1;;
+
+	*) echo
+		echo Apenas y ou n;;
+esac
+
+#END

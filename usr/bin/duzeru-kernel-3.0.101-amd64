@@ -1,0 +1,24 @@
+#!/bin/bash
+#duzeru-kernel amd64
+
+mkdir -p /tmp/kernel
+cd /tmp/kernel
+clear
+
+wget http://duzeru.org/archives/pool/main/kernel/v3.0.101/linux-headers-3.0.101-0300101-generic_3.0.101-0300101.201310220446_amd64.deb
+clear
+
+wget http://duzeru.org/archives/pool/main/kernel/v3.0.101/linux-headers-3.0.101-0300101_3.0.101-0300101.201310220446_all.deb
+clear
+
+wget http://duzeru.org/archives/pool/main/kernel/v3.0.101/linux-image-3.0.101-0300101-generic_3.0.101-0300101.201310220446_amd64.deb
+clear
+
+echo "Processo de instalação - Install process"
+sleep 3
+
+sudo dpkg -i *.deb
+
+init 6
+
+#END

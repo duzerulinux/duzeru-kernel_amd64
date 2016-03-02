@@ -1,0 +1,22 @@
+[Desktop Entry]
+Name=Kernel
+Name[ca]=Kernel
+Name[en_AU]=Kernel
+Name[en_GB]=Kernel
+Name[pt]=Kernel
+Name[pt_BR]=Kernel
+Name[pt_PT]=Kernel
+Comment= Install ad unistall Kernels in System
+Comment[en_AU]=Install ad unistall Kernels in System 
+Comment[en_GB]=Install ad unistall Kernels in System 
+Comment[pt]=Instalar e desinstalar Kernels
+Comment[pt_BR]=Install ad unistall Kernels in System
+Comment[pt_PT]=Install ad unistall Kernels in System 
+Exec=duzeru-kernel
+Terminal=false
+Type=Application
+StartupNotify=true
+Categories=GNOME;Settings;DesktopSettings;Utility;
+Keywords=Configuration;Menu;User;
+Icon=duzeru-kernel
+X-Ubuntu-Gettext-duzeru-kernel

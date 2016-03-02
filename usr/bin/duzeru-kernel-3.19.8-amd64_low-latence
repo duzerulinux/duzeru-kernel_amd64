@@ -1,0 +1,24 @@
+#!/bin/bash
+#duzeru-kernel amd64
+
+mkdir -p /tmp/kernel
+cd /tmp/kernel
+clear
+
+wget http://duzeru.org/archives/pool/main/kernel/v3.19.8/linux-headers-3.19.8-031908-lowlatency_3.19.8-031908.201505110938_amd64.deb
+clear
+
+wget http://duzeru.org/archives/pool/main/kernel/v3.19.8/linux-headers-3.19.8-031908_3.19.8-031908.201505110938_all.deb
+clear
+
+wget http://duzeru.org/archives/pool/main/kernel/v3.19.8/linux-image-3.19.8-031908-lowlatency_3.19.8-031908.201505110938_amd64.deb
+clear
+
+echo "Processo de instalação - Install process"
+sleep 3
+
+sudo dpkg -i *.deb
+
+init 6
+
+#END

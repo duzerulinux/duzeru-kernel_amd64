@@ -1,0 +1,12 @@
+Package: duzeru-kernel
+Version: 1.0.0
+Maintainer: Claudio A. Silva <claudiosilva@duzeru.org>
+Architecture: amd64
+Section: acessories
+Priority: optional
+Installed-Size: 1200
+Depends: python-simplejson, libjs-jquery, xfce4-terminal
+Homepage: http://duzeru.org
+Description: DuZeru GNU Linux Kernel Install
+ Instalador de Kernels para o DuZeru GNU/Linux
+ Pode ser usado para Debian e derivados.

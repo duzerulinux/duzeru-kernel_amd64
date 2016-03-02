@@ -1,0 +1,24 @@
+#!/bin/bash
+#duzeru-kernel amd64
+
+mkdir -p /tmp/kernel
+cd /tmp/kernel
+clear
+
+wget http://duzeru.org/archives/pool/main/kernel/v4.0.9/linux-headers-4.0.9-040009-generic_4.0.9-040009.201507212131_amd64.deb
+clear
+
+wget http://duzeru.org/archives/pool/main/kernel/v4.0.9/linux-headers-4.0.9-040009_4.0.9-040009.201507212131_all.deb
+clear
+
+wget http://duzeru.org/archives/pool/main/kernel/v4.0.9/linux-image-4.0.9-040009-generic_4.0.9-040009.201507212131_amd64.deb
+clear
+
+echo "Processo de instalação - Install process"
+sleep 3
+
+sudo dpkg -i *.deb
+
+init 6
+
+#END

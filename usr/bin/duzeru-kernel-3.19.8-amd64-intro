@@ -1,0 +1,4 @@
+#!/bin/bash
+#duzeru-kernel amd64
+xfce4-terminal -e /usr/bin/duzeru-kernel-3.19.8-amd64
+#END
