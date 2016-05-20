@@ -1,4 +1,4 @@
-/*@font-face {
+@font-face {
   font-family: 'Roboto Condensed';
   font-style: normal;
   font-weight: 300;
@@ -16,18 +16,15 @@
   font-weight: 700;
   src: local('Roboto Condensed Bold'), local('RobotoCondensed-Bold'), url(font/b9QBgL0iMZfDSpmcXcE8nCSLrGe-fkSRw2DeVgOoWcQ.woff) format('woff');
 }
-@import url(https://fonts.googleapis.com/css?family=Bree+Serif);
 
-*/
 html, body {
   margin: 0;
   padding: 0;
-  height: 100%;
+  height: 100%
 }
 
 body, button {
-  /*font-family: 'Roboto Condensed', sans-serif;*/
-    font-family: 'Bree Serif', serif;
+  font-family: 'Roboto Condensed', sans-serif;
 }
 
 #wrapper {
@@ -65,7 +62,7 @@ p.no-space {
 #header h1 {
   margin-left: 16px;
   line-height: 64px;
-  text-align: center;
+  text-align: left;
 
   text-shadow: 2px 4px 8px rgba(0,0,0,0.4),
                0px -5px 35px rgba(255,255,255,0.8);
@@ -81,8 +78,7 @@ p.no-space {
   text-shadow: 2px 4px 8px rgba(0,0,0,0.4),
                0px -5px 35px rgba(255,255,255,0.8);
 
-  font-size: 50px;
-
+  font-size: 16px;
   font-weight: normal;
 }
 
@@ -253,3 +249,57 @@ p.no-space {
   opacity: 1.0;
 }
 
+#alinhamento {
+  margin:15px;
+  padding: 0px;
+}
+
+
+//BOTOES DENTRO DE -usr-share-duzerukernel-index_html
+.btn:focus, .btn::-moz-focus-inner{
+  outline:none;
+  border:none;
+}
+.btn{
+  font-family: arial;
+  font-size:14px;
+  text-transform: uppercase;
+  font-weight:700;
+  border:none;
+  padding:10px;
+  cursor: pointer;
+  display:inline-block;
+  text-decoration: none;
+}
+.btn-verde{
+  background:green;
+  color:#fff;
+  box-shadow:0 5px 0 #006000;
+}
+.btn-verde:hover{
+  background:;
+  box-shadow:0 5px 0 #003f00;
+}
+.btn-laranja{
+  background:orange;
+  color:#fff;
+  box-shadow:0 5px 0 #670167;
+}
+.btn-laranja:hover{
+  background:;
+  box-shadow:0 5px 0 #470047;
+}
+.btn-vermelho{
+  background:red;
+  color:#fff;
+  box-shadow:0 5px 0 #d20000;
+}
+.btn-vermelho:hover{
+  background:#d20000;
+  box-shadow:0 5px 0 #b00000;
+}
+.btn-vermelho:active, .btn-laranja:active, .btn-vermelho:active{
+  position:relative;
+  top:5px;
+  box-shadow:none;
+}

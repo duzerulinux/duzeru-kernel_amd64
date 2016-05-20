@@ -133,13 +133,7 @@ class DuzeruAppView(WebKit.WebView):
         if uri.startswith('cmd://'):
             uri = uri[6:]
 
-        if uri == 'kernel_4.4.3amd64':
-            if os.path.exists("/usr/bin/duzeru-kernel-4.4.3-amd64"):
-                Popen(['gksudo', 'duzeru-kernel-4.4.3-amd64-intro'])
-            else:
-                      print('duzeru-kernel-4.4.3-amd64 not installed'.format(uri))
-
-        elif uri == 'kernel-now':
+        if uri == 'kernel-now':
             if os.path.exists("/usr/bin/duzeru-kernel-now-intro"):
                 Popen(['duzeru-kernel-now-intro'])
             else:
@@ -150,6 +144,25 @@ class DuzeruAppView(WebKit.WebView):
                 Popen(['gksudo', 'duzeru-kernel-remove-intro'])
             else:
                       print('duzeru-kernel-now not installed'.format(uri))
+#inicio kernel 4.5.5
+        elif uri == 'kernel_4.5.5amd64':
+            if os.path.exists("/usr/bin/duzeru-kernel-4.5.5-amd64"):
+                Popen(['gksudo', 'duzeru-kernel-4.5.5-amd64-intro'])
+            else:
+                      print('duzeru-kernel-4.5.5-amd64 not installed'.format(uri))
+
+        elif uri == 'kernel_4.5.5amd64_ll':
+            if os.path.exists("/usr/bin/duzeru-kernel-4.5.5-amd64_low-latence"):
+                Popen(['gksudo', 'duzeru-kernel-4.5.5-amd64_low-latence-intro'])
+            else:
+                      print('duzeru-kernel-4.5.5-amd64_low-latence not installed'.format(uri))
+#fim kernel 4.5.5
+
+        elif uri == 'kernel_4.4.3amd64':
+            if os.path.exists("/usr/bin/duzeru-kernel-4.4.3-amd64"):
+                Popen(['gksudo', 'duzeru-kernel-4.4.3-amd64-intro'])
+            else:
+                      print('duzeru-kernel-4.4.3-amd64 not installed'.format(uri))
 
         elif uri == 'kernel_4.4.3amd64_ll':
             if os.path.exists("/usr/bin/duzeru-kernel-4.0.9-amd64_low-latence"):
@@ -182,6 +195,12 @@ class DuzeruAppView(WebKit.WebView):
                       print('duzeru-kernel-3.19.8-amd64_low-latence not installed'.format(uri))
 
 #INICIO DE URLs para informação
+        elif uri == 'info_4.5.5amd64':
+            Popen(['exo-open', 'https://cdn.kernel.org/pub/linux/kernel/v4.x/ChangeLog-4.5.5'])
+
+        elif uri == 'info_4.5.5amd64-ll':
+            Popen(['exo-open', 'https://cdn.kernel.org/pub/linux/kernel/v4.x/ChangeLog-4.5.5'])
+
         elif uri == 'info_4.4.3amd64':
             Popen(['exo-open', 'https://cdn.kernel.org/pub/linux/kernel/v4.x/ChangeLog-4.4.3'])
 
@@ -242,8 +261,8 @@ class KernelApp(object):
         w = Gtk.Window()
         w.set_position(Gtk.WindowPosition.CENTER)
         w.set_wmclass('Kernel to Linux Duzeru', 'Kernel to Linux Duuzeru')
-        w.set_title('Kernel to Linux Duzeru')
-        w.set_size_request(768, 496)
+        w.set_title('Duzeru kernel')
+        w.set_size_request(640, 500)
         w.set_icon_from_file(os.path.join(self._data_path, "/usr/share/icons/hicolor/24x24/apps/duzeru-kernel.png"))
 
         # build webkit container

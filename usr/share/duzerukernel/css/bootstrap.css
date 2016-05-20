@@ -648,9 +648,7 @@ h3 {
   font-size: 24.5px;
 }
 h4 {
-/*  font-size: 17.5px; */
-  /* cGm */
-  font-size: 25.5px;
+  font-size: 17.5px;
 }
 h5 {
   font-size: 14px;
@@ -2038,11 +2036,8 @@ legend + .control-group {
   *zoom: 1;
   padding: 4px 12px;
   margin-bottom: 0;
-  /* cGm */
-  font-size: 20px;
-  line-height: 50px;
-  width: 215px;
-  /* cGm */
+  font-size: 14px;
+  line-height: 20px;
   text-align: center;
   vertical-align: middle;
   cursor: pointer;

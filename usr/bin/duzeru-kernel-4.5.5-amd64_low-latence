@@ -1,0 +1,26 @@
+#!/bin/bash
+#duzeru-kernel amd64 low-latence
+
+mkdir -p /tmp/kernel
+cd /tmp/kernel
+clear
+
+wget http://duzeru.org/archives/pool/main/kernel/v4.5.5/linux-headers-4.5.5-040505-lowlatency_4.5.5-040505.201605182239_amd64.deb
+clear
+
+wget http://duzeru.org/archives/pool/main/kernel/v4.5.5/linux-headers-4.5.5-040505_4.5.5-040505.201605182239_all.deb
+clear
+
+wget http://duzeru.org/archives/pool/main/kernel/v4.5.5/linux-image-4.5.5-040505-lowlatency_4.5.5-040505.201605182239_amd64.deb
+clear
+
+echo "Processo de instalação - Install process"
+sleep 3
+
+sudo dpkg -i *.deb
+
+init 6
+
+exit
+
+#END
